@@ -44,9 +44,39 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  --radius: 0.75rem;
+  
+  /* Orbian Fit Brand Colors - Fixed Palette */
+  --orbian-yellow: #FFC300;
+  --orbian-yellow-light: #FFD54F;
+  --orbian-yellow-dark: #FFB800;
+  --orbian-red: #E10600;
+  --orbian-red-dark: #C00000;
+  --orbian-black: #0A0A0A;
+  --orbian-gray: #4A4A4A;
+  --orbian-gray-light: #F5F5F5;
+  --orbian-white: #FFFFFF;
+  
+  /* Light Theme (Default) */
+  --background: #FFFFFF;
+  --foreground: #0A0A0A;
+  --card: #FFFFFF;
+  --card-foreground: #0A0A0A;
+  --popover: #FFFFFF;
+  --popover-foreground: #0A0A0A;
+  --primary: #FFC300;
+  --primary-foreground: #0A0A0A;
+  --secondary: #F5F5F5;
+  --secondary-foreground: #0A0A0A;
+  --muted: #F5F5F5;
+  --muted-foreground: #4A4A4A;
+  --accent: #FFC300;
+  --accent-foreground: #0A0A0A;
+  --destructive: #E10600;
+  --destructive-foreground: #FFFFFF;
+  --border: #E5E5E5;
+  --input: #E5E5E5;
+  --ring: #FFC300;
   
   /* Additional font families for AI usage */
   --font-inter: "Inter", ui-sans-serif, system-ui, sans-serif;
@@ -55,69 +85,56 @@
   --font-source-code: "Source Code Pro", ui-monospace, SFMono-Regular, monospace;
   --font-fira-code: "Fira Code", ui-monospace, SFMono-Regular, monospace;
   --font-jetbrains: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #0A0A0A;
+  --sidebar-primary: #FFC300;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #F5F5F5;
+  --sidebar-accent-foreground: #0A0A0A;
+  --sidebar-border: #E5E5E5;
+  --sidebar-ring: #FFC300;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  /* Dark Theme */
+  --background: #0A0A0A;
+  --foreground: #FFFFFF;
+  --card: #1A1A1A;
+  --card-foreground: #FFFFFF;
+  --popover: #1A1A1A;
+  --popover-foreground: #FFFFFF;
+  --primary: #FFC300;
+  --primary-foreground: #0A0A0A;
+  --secondary: #2A2A2A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #2A2A2A;
+  --muted-foreground: #A0A0A0;
+  --accent: #FFC300;
+  --accent-foreground: #0A0A0A;
+  --destructive: #E10600;
+  --destructive-foreground: #FFFFFF;
+  --border: #2A2A2A;
+  --input: #2A2A2A;
+  --ring: #FFC300;
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: #1A1A1A;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #FFC300;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #2A2A2A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #2A2A2A;
+  --sidebar-ring: #FFC300;
 }
 
 @layer base {
@@ -125,6 +142,134 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Typography improvements - Better hierarchy and spacing */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-bold tracking-tight;
+    line-height: 1.3;
+    margin-bottom: 0.5em;
+  }
+  
+  h1 {
+    @apply text-3xl md:text-4xl;
+  }
+  
+  h2 {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  h3 {
+    @apply text-xl md:text-2xl;
+  }
+  
+  p {
+    line-height: 1.7;
+    margin-bottom: 0.75em;
+  }
+  
+  /* Fix text overlap issues - Critical for preventing name stacking */
+  .text-stack > * + * {
+    margin-top: 0.75rem;
+  }
+  
+  /* Ensure proper spacing in lists */
+  ul, ol {
+    @apply space-y-3;
+  }
+  
+  /* Prevent text wrapping issues */
+  .no-overlap {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  /* Card improvements - Clean white/dark cards */
+  .card-clean {
+    @apply bg-card rounded-2xl shadow-md border border-border;
+    padding: 1.5rem;
+  }
+  
+  /* Button improvements */
+  button {
+    @apply transition-all duration-200 ease-in-out;
+  }
+}
+
+/* Utility classes for Orbian Fit brand */
+.bg-orbian-yellow {
+  background-color: var(--orbian-yellow);
+}
+
+.bg-orbian-yellow-light {
+  background-color: var(--orbian-yellow-light);
+}
+
+.bg-orbian-red {
+  background-color: var(--orbian-red);
+}
+
+.text-orbian-black {
+  color: var(--orbian-black);
+}
+
+.text-orbian-gray {
+  color: var(--orbian-gray);
+}
+
+.border-orbian-yellow {
+  border-color: var(--orbian-yellow);
+}
+
+.hover\:bg-orbian-red-dark:hover {
+  background-color: var(--orbian-red-dark);
+}
+
+.hover\:bg-orbian-yellow-dark:hover {
+  background-color: var(--orbian-yellow-dark);
+}
+
+/* Smooth transitions */
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Spacing utilities to prevent overlap */
+  .space-y-safe > * + * {
+    margin-top: 1rem;
+  }
+  
+  .gap-safe {
+    gap: 1rem;
+  }
+}
+
+/* Theme-aware backgrounds */
+.bg-theme-primary {
+  background-color: var(--background);
+}
+
+.bg-theme-card {
+  background-color: var(--card);
+}
+
+.text-theme-primary {
+  color: var(--foreground);
+}
+
+.text-theme-muted {
+  color: var(--muted-foreground);
+}
+
+/* Ensure good contrast in both themes */
+.theme-text-contrast {
+  color: var(--foreground);
+}
+
+.theme-bg-contrast {
+  background-color: var(--card);
+  color: var(--card-foreground);
 }

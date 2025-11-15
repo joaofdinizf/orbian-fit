@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -161,6 +161,7 @@ export default function TeacherProfilePage() {
     }
   });
 
+  const [profileLink, setProfileLink] = useState('');
   const [reviews] = useState<Review[]>([
     {
       id: '1',
@@ -220,6 +221,12 @@ export default function TeacherProfilePage() {
     }
   ]);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setProfileLink(`${window.location.origin}/teacher-profile/public/${profile.id}`);
+    }
+  }, [profile.id]);
+
   const handleSaveProfile = () => {
     setIsEditing(false);
     // Aqui salvaria no banco de dados
@@ -250,8 +257,8 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
   };
 
   const copyProfileLink = () => {
-    const link = `${window.location.origin}/teacher-profile/public/${profile.id}`;
-    navigator.clipboard.writeText(link);
+    if (!profileLink) return;
+    navigator.clipboard.writeText(profileLink);
     alert('Link copiado para a área de transferência!');
   };
 
@@ -262,7 +269,7 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
   };
 
   const filteredLeads = leads.filter(lead => {
-    const matchesFilter = filterLeads === 'all' || lead.status === filterLeads;
+    const matchesFilter = filterLeads === 'all' || lead.status === filterLeads as Lead['status'];
     const matchesSearch = lead.name.toLowerCase().includes(searchLeads.toLowerCase()) ||
                          lead.email.toLowerCase().includes(searchLeads.toLowerCase());
     return matchesFilter && matchesSearch;
@@ -734,7 +741,7 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
                     Copiar Link
                   </Button>
                   <Button
-                    onClick={() => window.open(`/teacher-profile/public/${profile.id}`, '_blank')}
+                    onClick={() => typeof window !== 'undefined' && window.open(`/teacher-profile/public/${profile.id}`, '_blank')}
                     className="bg-[#E10600] hover:bg-[#C00000] text-white rounded-xl"
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
@@ -746,7 +753,7 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
                 <div className="bg-[#FFF3C4] p-4 rounded-xl border border-[#FFC300]">
                   <p className="text-[#0A0A0A] font-medium mb-2">Link da sua página pública:</p>
                   <code className="text-sm bg-white p-2 rounded border text-[#4A4A4A] block">
-                    {window.location.origin}/teacher-profile/public/{profile.id}
+                    {profileLink || 'Carregando link...'}
                   </code>
                 </div>
 

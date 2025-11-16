@@ -4,8 +4,11 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Shield, Users, CreditCard, Flag, Loader2, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Shield, Users, CreditCard, Flag, Loader2, AlertCircle, Edit, Save, X } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface User {
   id: string;
@@ -30,7 +33,7 @@ const PLANOS = [
   { slug: 'beta_full_120', nome: 'Beta 120 dias', maxAlunos: 4 },
 ];
 
-const FEATURE_FLAGS: FeatureFlagInfo[] = [
+const INITIAL_FEATURE_FLAGS: FeatureFlagInfo[] = [
   { slug: 'share_card', description: 'Compartilhar card de treino', enabled: false },
   { slug: 'plan_vs_done', description: 'Planejado vs Realizado', enabled: false },
   { slug: 'swap_exercise', description: 'Trocar exercício', enabled: false },
@@ -50,12 +53,16 @@ export default function AdminPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
+  const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [editingUserData, setEditingUserData] = useState<Partial<User>>({});
+  const [featureFlags, setFeatureFlags] = useState<FeatureFlagInfo[]>(INITIAL_FEATURE_FLAGS);
+  const [savingUserId, setSavingUserId] = useState<string | null>(null);
+  const [savingFlags, setSavingFlags] = useState(false);
 
   useEffect(() => {
     async function fetchUsers() {
       try {
         console.log('🔍 [AdminPage] Iniciando busca de usuários...');
-        console.log('🔍 [AdminPage] URL da API:', '/api/admin/users');
         
         const response = await fetch('/api/admin/users', {
           method: 'GET',
@@ -66,7 +73,6 @@ export default function AdminPage() {
         });
 
         console.log('📡 [AdminPage] Status da resposta:', response.status);
-        console.log('📡 [AdminPage] Headers da resposta:', Object.fromEntries(response.headers.entries()));
 
         if (response.status === 401) {
           console.log('❌ [AdminPage] Não autorizado - redirecionando para login');
@@ -117,6 +123,90 @@ export default function AdminPage() {
 
     fetchUsers();
   }, [router]);
+
+  const handleEditUser = (user: User) => {
+    setEditingUserId(user.id);
+    setEditingUserData({
+      tipo_usuario: user.tipo_usuario,
+      plano_atual_slug: user.plano_atual_slug,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditingUserId(null);
+    setEditingUserData({});
+  };
+
+  const handleSaveUser = async (userId: string) => {
+    setSavingUserId(userId);
+    try {
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editingUserData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao atualizar usuário');
+      }
+
+      const updatedUser = await response.json();
+      
+      // Atualizar lista local
+      setUsers(users.map(u => u.id === userId ? { ...u, ...editingUserData } : u));
+      setEditingUserId(null);
+      setEditingUserData({});
+      
+      console.log('✅ Usuário atualizado com sucesso');
+    } catch (error) {
+      console.error('❌ Erro ao salvar usuário:', error);
+      alert('Erro ao salvar alterações. Tente novamente.');
+    } finally {
+      setSavingUserId(null);
+    }
+  };
+
+  const handleToggleFeatureFlag = async (slug: string) => {
+    const flag = featureFlags.find(f => f.slug === slug);
+    if (!flag) return;
+
+    const newEnabled = !flag.enabled;
+    
+    // Atualizar UI otimisticamente
+    setFeatureFlags(featureFlags.map(f => 
+      f.slug === slug ? { ...f, enabled: newEnabled } : f
+    ));
+
+    setSavingFlags(true);
+    try {
+      const response = await fetch('/api/admin/feature-flags', {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ slug, enabled: newEnabled }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao atualizar feature flag');
+      }
+
+      console.log(`✅ Feature flag ${slug} atualizada para ${newEnabled}`);
+    } catch (error) {
+      console.error('❌ Erro ao atualizar feature flag:', error);
+      // Reverter mudança em caso de erro
+      setFeatureFlags(featureFlags.map(f => 
+        f.slug === slug ? { ...f, enabled: !newEnabled } : f
+      ));
+      alert('Erro ao atualizar feature flag. Tente novamente.');
+    } finally {
+      setSavingFlags(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -188,7 +278,7 @@ export default function AdminPage() {
               <CardTitle>Visão Geral de Usuários</CardTitle>
             </div>
             <CardDescription>
-              Total de {users.length} usuários cadastrados
+              Total de {users.length} usuários cadastrados - Clique em Editar para modificar
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -206,6 +296,7 @@ export default function AdminPage() {
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">Tipo</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">Plano</th>
                       <th className="text-left py-3 px-4 font-semibold text-gray-700">Status</th>
+                      <th className="text-left py-3 px-4 font-semibold text-gray-700">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -214,12 +305,51 @@ export default function AdminPage() {
                         <td className="py-3 px-4">{user.nome}</td>
                         <td className="py-3 px-4 text-gray-600">{user.email}</td>
                         <td className="py-3 px-4">
-                          <Badge variant={user.tipo_usuario === 'professor' ? 'default' : 'secondary'}>
-                            {user.tipo_usuario === 'professor' ? 'Professor' : 'Aluno'}
-                          </Badge>
+                          {editingUserId === user.id ? (
+                            <Select
+                              value={editingUserData.tipo_usuario}
+                              onValueChange={(value) => 
+                                setEditingUserData({ ...editingUserData, tipo_usuario: value as 'professor' | 'aluno' })
+                              }
+                            >
+                              <SelectTrigger className="w-32">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="professor">Professor</SelectItem>
+                                <SelectItem value="aluno">Aluno</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          ) : (
+                            <Badge variant={user.tipo_usuario === 'professor' ? 'default' : 'secondary'}>
+                              {user.tipo_usuario === 'professor' ? 'Professor' : 'Aluno'}
+                            </Badge>
+                          )}
                         </td>
                         <td className="py-3 px-4">
-                          {user.plano_atual_slug ? (
+                          {editingUserId === user.id ? (
+                            <Select
+                              value={editingUserData.plano_atual_slug || 'none'}
+                              onValueChange={(value) => 
+                                setEditingUserData({ 
+                                  ...editingUserData, 
+                                  plano_atual_slug: value === 'none' ? null : value 
+                                })
+                              }
+                            >
+                              <SelectTrigger className="w-40">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="none">Sem plano</SelectItem>
+                                {PLANOS.map(plano => (
+                                  <SelectItem key={plano.slug} value={plano.slug}>
+                                    {plano.nome}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          ) : user.plano_atual_slug ? (
                             <Badge variant="outline">{user.plano_atual_slug}</Badge>
                           ) : (
                             <span className="text-gray-400">Sem plano</span>
@@ -234,6 +364,40 @@ export default function AdminPage() {
                             <span className="text-sm text-gray-500">Vinculado</span>
                           ) : (
                             <span className="text-sm text-green-600">Ativo</span>
+                          )}
+                        </td>
+                        <td className="py-3 px-4">
+                          {editingUserId === user.id ? (
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                onClick={() => handleSaveUser(user.id)}
+                                disabled={savingUserId === user.id}
+                              >
+                                {savingUserId === user.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                  <Save className="w-4 h-4" />
+                                )}
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={handleCancelEdit}
+                                disabled={savingUserId === user.id}
+                              >
+                                <X className="w-4 h-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleEditUser(user)}
+                              disabled={!!editingUserId}
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
                           )}
                         </td>
                       </tr>
@@ -287,23 +451,25 @@ export default function AdminPage() {
               <CardTitle>Feature Flags</CardTitle>
             </div>
             <CardDescription>
-              Estado atual das funcionalidades do sistema
+              Ative ou desative funcionalidades do sistema - Mudanças são salvas automaticamente
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {FEATURE_FLAGS.map((flag) => (
+              {featureFlags.map((flag) => (
                 <div
                   key={flag.slug}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200"
                 >
-                  <div className="flex-1">
+                  <div className="flex-1 mr-3">
                     <p className="font-medium text-gray-900 text-sm">{flag.description}</p>
                     <p className="text-xs text-gray-500 mt-0.5">{flag.slug}</p>
                   </div>
-                  <Badge variant={flag.enabled ? 'default' : 'secondary'}>
-                    {flag.enabled ? 'Ativa' : 'Inativa'}
-                  </Badge>
+                  <Switch
+                    checked={flag.enabled}
+                    onCheckedChange={() => handleToggleFeatureFlag(flag.slug)}
+                    disabled={savingFlags}
+                  />
                 </div>
               ))}
             </div>

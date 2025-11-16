@@ -1,18 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Check, Dumbbell, Sparkles, Users, TrendingUp, ArrowRight } from 'lucide-react';
+import {
+  Check,
+  Dumbbell,
+  Sparkles,
+  Users,
+  TrendingUp,
+  ArrowRight,
+} from 'lucide-react';
 
 const planosAluno = [
   {
     slug: 'aluno_orbian',
     nome: 'Plano Aluno Orbian',
     descricao: 'Treinos e nutrição com IA',
-    preco: 19.90,
+    preco: 19.9,
     destaque: true,
     beneficios: [
       'Treinos personalizados por objetivo',
@@ -32,19 +45,23 @@ export default function PlanosAlunoPage() {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [selectedPlano, setSelectedPlano] = useState<string | null>(null);
-  const isNovo = searchParams.get('novo') === 'true';
+
+  // 👇 aqui está o ajuste que tira o erro de "possivelmente null"
+  const isNovo = (searchParams?.get('novo') ?? '') === 'true';
 
   const handleAssinar = async (planoSlug: string) => {
     setLoading(true);
     setSelectedPlano(planoSlug);
 
     try {
-      // Criar assinatura no Mercado Pago
-      const response = await fetch('/api/pagamentos/criar-assinatura-aluno', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ planoSlug }),
-      });
+      const response = await fetch(
+        '/api/pagamentos/criar-assinatura-aluno',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ planoSlug }),
+        }
+      );
 
       const data = await response.json();
 
@@ -52,7 +69,6 @@ export default function PlanosAlunoPage() {
         throw new Error(data.error || 'Erro ao criar assinatura');
       }
 
-      // Redirecionar para checkout do Mercado Pago
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       }
@@ -95,7 +111,8 @@ export default function PlanosAlunoPage() {
           Escolha seu plano e comece hoje
         </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Transforme seu corpo com treinos inteligentes e nutrição personalizada
+          Transforme seu corpo com treinos inteligentes e nutrição
+          personalizada
         </p>
       </div>
 
@@ -116,23 +133,36 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-gradient-to-br from-blue-600 to-purple-600 p-4 rounded-2xl w-fit">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-3xl font-bold">{plano.nome}</CardTitle>
-              <CardDescription className="text-lg">{plano.descricao}</CardDescription>
+              <CardTitle className="text-3xl font-bold">
+                {plano.nome}
+              </CardTitle>
+              <CardDescription className="text-lg">
+                {plano.descricao}
+              </CardDescription>
               <div className="mt-6">
                 <div className="text-5xl font-bold text-gray-900">
                   R$ {plano.preco.toFixed(2)}
-                  <span className="text-xl text-gray-600 font-normal">/mês</span>
+                  <span className="text-xl text-gray-600 font-normal">
+                    /mês
+                  </span>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">Cancele quando quiser</p>
+                <p className="text-sm text-gray-500 mt-2">
+                  Cancele quando quiser
+                </p>
               </div>
             </CardHeader>
 
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 {plano.beneficios.map((beneficio, index) => (
-                  <div key={index} className="flex items-start gap-3">
+                  <div
+                    key={index}
+                    className="flex items-start gap-3"
+                  >
                     <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">{beneficio}</span>
+                    <span className="text-gray-700">
+                      {beneficio}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -142,7 +172,9 @@ export default function PlanosAlunoPage() {
                 disabled={loading && selectedPlano === plano.slug}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg py-6"
               >
-                {loading && selectedPlano === plano.slug ? 'Processando...' : 'Assinar agora'}
+                {loading && selectedPlano === plano.slug
+                  ? 'Processando...'
+                  : 'Assinar agora'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
 
@@ -157,15 +189,20 @@ export default function PlanosAlunoPage() {
       {/* Features adicionais */}
       <div className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center mb-12">Por que escolher o Orbian Fit?</h3>
+          <h3 className="text-3xl font-bold text-center mb-12">
+            Por que escolher o Orbian Fit?
+          </h3>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="mx-auto mb-4 bg-blue-100 p-4 rounded-2xl w-fit">
                 <TrendingUp className="w-8 h-8 text-blue-600" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">Resultados Reais</h4>
+              <h4 className="font-semibold text-lg mb-2">
+                Resultados Reais
+              </h4>
               <p className="text-gray-600">
-                Acompanhe sua evolução com métricas detalhadas e ajustes automáticos
+                Acompanhe sua evolução com métricas detalhadas e
+                ajustes automáticos
               </p>
             </div>
 
@@ -173,9 +210,12 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-purple-100 p-4 rounded-2xl w-fit">
                 <Sparkles className="w-8 h-8 text-purple-600" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">Inteligência Artificial</h4>
+              <h4 className="font-semibold text-lg mb-2">
+                Inteligência Artificial
+              </h4>
               <p className="text-gray-600">
-                IA que aprende com você e adapta treinos e nutrição automaticamente
+                IA que aprende com você e adapta treinos e nutrição
+                automaticamente
               </p>
             </div>
 
@@ -183,7 +223,9 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-green-100 p-4 rounded-2xl w-fit">
                 <Users className="w-8 h-8 text-green-600" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">Comunidade Ativa</h4>
+              <h4 className="font-semibold text-lg mb-2">
+                Comunidade Ativa
+              </h4>
               <p className="text-gray-600">
                 Participe de desafios e conecte-se com outros atletas
               </p>

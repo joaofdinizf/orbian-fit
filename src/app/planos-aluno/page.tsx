@@ -43,25 +43,23 @@ const planosAluno = [
 export default function PlanosAlunoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+
   const [loading, setLoading] = useState(false);
   const [selectedPlano, setSelectedPlano] = useState<string | null>(null);
 
-  // 👇 aqui está o ajuste que tira o erro de "possivelmente null"
-  const isNovo = (searchParams?.get('novo') ?? '') === 'true';
+  // 👇 aqui está o ajuste: usa optional chaining para evitar o erro de "possivelmente null"
+  const isNovo = searchParams?.get('novo') === 'true';
 
   const handleAssinar = async (planoSlug: string) => {
     setLoading(true);
     setSelectedPlano(planoSlug);
 
     try {
-      const response = await fetch(
-        '/api/pagamentos/criar-assinatura-aluno',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ planoSlug }),
-        }
-      );
+      const response = await fetch('/api/pagamentos/criar-assinatura-aluno', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ planoSlug }),
+      });
 
       const data = await response.json();
 
@@ -111,8 +109,7 @@ export default function PlanosAlunoPage() {
           Escolha seu plano e comece hoje
         </h2>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-          Transforme seu corpo com treinos inteligentes e nutrição
-          personalizada
+          Transforme seu corpo com treinos inteligentes e nutrição personalizada
         </p>
       </div>
 
@@ -133,9 +130,7 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-gradient-to-br from-blue-600 to-purple-600 p-4 rounded-2xl w-fit">
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
-              <CardTitle className="text-3xl font-bold">
-                {plano.nome}
-              </CardTitle>
+              <CardTitle className="text-3xl font-bold">{plano.nome}</CardTitle>
               <CardDescription className="text-lg">
                 {plano.descricao}
               </CardDescription>
@@ -155,14 +150,9 @@ export default function PlanosAlunoPage() {
             <CardContent className="space-y-6">
               <div className="grid md:grid-cols-2 gap-4">
                 {plano.beneficios.map((beneficio, index) => (
-                  <div
-                    key={index}
-                    className="flex items-start gap-3"
-                  >
+                  <div key={index} className="flex items-start gap-3">
                     <Check className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-700">
-                      {beneficio}
-                    </span>
+                    <span className="text-gray-700">{beneficio}</span>
                   </div>
                 ))}
               </div>
@@ -197,12 +187,10 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-blue-100 p-4 rounded-2xl w-fit">
                 <TrendingUp className="w-8 h-8 text-blue-600" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">
-                Resultados Reais
-              </h4>
+              <h4 className="font-semibold text-lg mb-2">Resultados Reais</h4>
               <p className="text-gray-600">
-                Acompanhe sua evolução com métricas detalhadas e
-                ajustes automáticos
+                Acompanhe sua evolução com métricas detalhadas e ajustes
+                automáticos
               </p>
             </div>
 
@@ -223,9 +211,7 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-green-100 p-4 rounded-2xl w-fit">
                 <Users className="w-8 h-8 text-green-600" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">
-                Comunidade Ativa
-              </h4>
+              <h4 className="font-semibold text-lg mb-2">Comunidade Ativa</h4>
               <p className="text-gray-600">
                 Participe de desafios e conecte-se com outros atletas
               </p>

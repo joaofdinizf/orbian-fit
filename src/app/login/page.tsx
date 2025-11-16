@@ -1,174 +1,77 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useRouter } from 'next/navigation';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { LogIn, Mail, Lock, AlertCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Dumbbell, User } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LoginPage() {
+export default function LoginSelectionPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const redirect = searchParams.get('redirect') || '/';
-
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, senha }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Erro ao fazer login');
-      }
-
-      // Redirecionar baseado no tipo de usuário
-      if (data.user.tipoUsuario === 'professor') {
-        router.push('/dashboard');
-      } else if (data.user.tipoUsuario === 'aluno') {
-        router.push('/app-aluno');
-      } else {
-        router.push(redirect);
-      }
-      
-      router.refresh();
-    } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login. Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-2xl rounded-3xl border-border">
-        <CardHeader className="text-center pb-6 pt-10">
-          <div className="mx-auto w-20 h-20 mb-4 flex items-center justify-center">
-            <img 
-              src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/6aeb479b-c4ce-4e78-9000-aab5f70cf4c6.png" 
-              alt="Orbian Fit Logo" 
-              className="h-16 w-auto"
-            />
+      <Card className="w-full max-w-md bg-card shadow-2xl rounded-3xl border border-border">
+        <CardContent className="p-8">
+          {/* Logo e Título */}
+          <div className="text-center mb-8">
+            <div className="flex justify-center mb-4">
+              <img 
+                src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/b4d57c0d-ebec-4a74-a3a6-002c5c2e5f55.png" 
+                alt="Orbian Fit Logo" 
+                className="h-16 w-auto"
+              />
+            </div>
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Orbian Fit
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Conectando personal trainers e alunos de forma inteligente
+            </p>
           </div>
-          <CardTitle className="text-3xl font-bold text-foreground">
-            Bem-vindo de volta!
-          </CardTitle>
-          <p className="text-muted-foreground mt-2">
-            Entre com suas credenciais para continuar
-          </p>
-        </CardHeader>
 
-        <CardContent className="px-8 pb-10">
-          <form onSubmit={handleLogin} className="space-y-5">
-            {error && (
-              <div className="bg-destructive/10 border border-destructive rounded-xl p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-destructive">{error}</p>
-              </div>
-            )}
+          {/* Badge Tema Escuro (opcional) */}
+          <div className="flex justify-center mb-6">
+            <Badge variant="outline" className="text-xs">
+              Tema Escuro
+            </Badge>
+          </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground font-medium">
-                E-mail
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="seu@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="pl-10 h-12 rounded-xl border-border"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="senha" className="text-foreground font-medium">
-                Senha
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
-                <Input
-                  id="senha"
-                  type="password"
-                  placeholder="••••••••"
-                  value={senha}
-                  onChange={(e) => setSenha(e.target.value)}
-                  required
-                  className="pl-10 h-12 rounded-xl border-border"
-                />
-              </div>
-            </div>
+          {/* Botões de Seleção */}
+          <div className="space-y-4">
+            <Button
+              onClick={() => router.push('/login/personal')}
+              className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground font-semibold py-6 rounded-2xl text-lg shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Dumbbell className="w-5 h-5 mr-2" />
+              Sou Personal Trainer
+            </Button>
 
             <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold h-12 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg"
+              onClick={() => router.push('/login/aluno')}
+              variant="outline"
+              className="w-full bg-card hover:bg-secondary text-foreground font-semibold py-6 border-2 border-destructive rounded-2xl text-lg transition-all duration-300"
             >
-              {loading ? (
-                'Entrando...'
-              ) : (
-                <>
-                  <LogIn className="w-5 h-5 mr-2" />
-                  Entrar
-                </>
-              )}
+              <User className="w-5 h-5 mr-2" />
+              Sou Aluno
             </Button>
-          </form>
 
-          <div className="mt-8 space-y-4">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-4 bg-card text-muted-foreground">
-                  Não tem uma conta?
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <Link href="/cadastro-professor">
-                <Button
-                  variant="outline"
-                  className="w-full border-2 border-primary text-primary hover:bg-primary hover:text-primary-foreground rounded-xl font-medium transition-all duration-200"
-                >
-                  Sou Professor
-                </Button>
-              </Link>
-              <Link href="/cadastro-aluno">
-                <Button
-                  variant="outline"
-                  className="w-full border-2 border-foreground text-foreground hover:bg-secondary rounded-xl font-medium transition-all duration-200"
-                >
-                  Sou Aluno
-                </Button>
+            <div className="text-center pt-2">
+              <Link 
+                href="/login/owner"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
+              >
+                Sou Dono (Owner)
               </Link>
             </div>
           </div>
 
-          <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-primary hover:underline">
-              Voltar para a página inicial
+          {/* Link para cadastro */}
+          <div className="text-center mt-8 text-sm text-muted-foreground">
+            Não tem uma conta?{' '}
+            <Link href="/cadastro-professor" className="text-destructive hover:underline font-medium">
+              Cadastre-se
             </Link>
           </div>
         </CardContent>

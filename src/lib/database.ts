@@ -21,6 +21,7 @@ export interface User {
   plano_atual_slug?: string | null;
   professor_id_vinculado?: string | null;
   is_embaixador?: boolean;
+  is_owner?: boolean; // NOVO: campo para identificar o dono do app
   origem_cadastro?: string;
   created_at?: string;
   updated_at?: string;
@@ -70,4 +71,18 @@ export async function updateUser(id: string, userData: Partial<User>): Promise<U
   }
 
   return data as User;
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  const { data, error } = await db
+    .from('users')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('Erro ao buscar usuários:', error);
+    return [];
+  }
+
+  return data as User[];
 }

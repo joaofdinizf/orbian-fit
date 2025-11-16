@@ -10,16 +10,18 @@ const SECRET_KEY = new TextEncoder().encode(
 const PUBLIC_ROUTES = [
   '/',
   '/login',
+  '/login/owner',
   '/cadastro-professor',
   '/cadastro-aluno',
   '/planos',
   '/planos-aluno',
   '/planos-professor',
   '/marketplace',
+  '/health',
 ];
 
 // Rotas de autenticação (redirecionar se já logado)
-const AUTH_ROUTES = ['/login', '/cadastro-professor', '/cadastro-aluno'];
+const AUTH_ROUTES = ['/login', '/login/owner', '/cadastro-professor', '/cadastro-aluno'];
 
 interface SessionUser {
   id: string;
@@ -28,6 +30,7 @@ interface SessionUser {
   tipoUsuario: 'professor' | 'aluno';
   planoAtualSlug?: string | null;
   professorIdVinculado?: string | null;
+  isOwner?: boolean;
 }
 
 interface SessionData {
@@ -38,14 +41,21 @@ interface SessionData {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Permitir acesso a arquivos estáticos, API routes, Next.js internals
+  // IMPORTANTE: Permitir TODAS as rotas de API sem verificação de middleware
+  // As rotas de API fazem sua própria verificação de autenticação
+  if (pathname.startsWith('/api/')) {
+    return NextResponse.next();
+  }
+
+  // Permitir acesso a arquivos estáticos, Next.js internals e HMR
   if (
     pathname.startsWith('/_next/') ||
-    pathname.startsWith('/api/') ||
     pathname.startsWith('/__nextjs') ||
+    pathname.startsWith('/lasy-bridge') ||
     pathname.includes('webpack-hmr') ||
     pathname.includes('hot-update') ||
-    pathname.startsWith('/lasy-bridge') ||
+    pathname.includes('_next/static') ||
+    pathname.includes('_next/image') ||
     pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|css|js|json|woff|woff2|ttf|eot|map)$/)
   ) {
     return NextResponse.next();
@@ -81,6 +91,11 @@ export async function middleware(request: NextRequest) {
   const isAuthenticated = session !== null;
   const user = session?.user;
 
+  // REGRA ESPECIAL: Se é OWNER, liberar acesso a TUDO
+  if (isAuthenticated && user?.isOwner === true) {
+    return NextResponse.next();
+  }
+
   // REGRA 1: Se usuário está logado e tenta acessar rotas de autenticação ou home
   if (isAuthenticated && user) {
     if (AUTH_ROUTES.includes(pathname) || pathname === '/') {
@@ -88,20 +103,26 @@ export async function middleware(request: NextRequest) {
       if (user.tipoUsuario === 'professor') {
         return NextResponse.redirect(new URL('/dashboard', request.url));
       } else if (user.tipoUsuario === 'aluno') {
-        // Aluno vai para a home do app (que seria a página principal com role de aluno)
         return NextResponse.redirect(new URL('/app-aluno', request.url));
       }
     }
   }
 
-  // REGRA 2: Se não está autenticado e tenta acessar rota privada
+  // REGRA 2: Proteger rota /admin (apenas owner)
+  if (pathname.startsWith('/admin')) {
+    if (!isAuthenticated || user?.isOwner !== true) {
+      return NextResponse.redirect(new URL('/login/owner', request.url));
+    }
+  }
+
+  // REGRA 3: Se não está autenticado e tenta acessar rota privada
   if (!isAuthenticated && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('redirect', pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // REGRA 3: Permitir acesso
+  // REGRA 4: Permitir acesso
   return NextResponse.next();
 }
 
@@ -114,6 +135,6 @@ export const config = {
      * - static files (contêm extensão de arquivo)
      * - webpack HMR
      */
-    '/((?!api/|_next/|__nextjs|.*\\..*)*)',
+    '/((?!api/|_next/|__nextjs|lasy-bridge|.*\\..*)*)',
   ],
 };

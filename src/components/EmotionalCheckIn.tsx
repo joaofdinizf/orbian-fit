@@ -6,17 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Slider } from '@/components/ui/slider';
-import { 
-  Heart, 
-  Smile, 
-  Meh, 
-  Frown, 
+import {
+  Heart,
+  Smile,
+  Meh,
+  Frown,
   Battery,
   Calendar,
   TrendingUp,
-  Save
+  Save,
 } from 'lucide-react';
-import { EmotionalCheckIn } from '@/lib/types';
+import type { EmotionalCheckIn as EmotionalCheckInType } from '@/lib/types';
 
 interface EmotionalCheckInProps {
   userRole: 'trainer' | 'student';
@@ -34,14 +34,14 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
   const [selectedMood, setSelectedMood] = useState<string>('');
   const [energyLevel, setEnergyLevel] = useState([7]);
   const [notes, setNotes] = useState('');
-  const [checkIns, setCheckIns] = useState<EmotionalCheckIn[]>([
+  const [checkIns, setCheckIns] = useState<EmotionalCheckInType[]>([
     {
       id: '1',
       studentId: 'student1',
       mood: 'good',
       energyLevel: 8,
       notes: 'Me sinto bem hoje, pronto para o treino!',
-      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 horas atrás
+      createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
     },
     {
       id: '2',
@@ -49,7 +49,7 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
       mood: 'tired',
       energyLevel: 5,
       notes: 'Dia corrido no trabalho, mas vou tentar dar o meu melhor.',
-      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 dia atrás
+      createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 dia atrás
     },
     {
       id: '3',
@@ -57,20 +57,20 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
       mood: 'excellent',
       energyLevel: 9,
       notes: 'Dormi muito bem! Energia total para treinar.',
-      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 dias atrás
-    }
+      createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 dias atrás
+    },
   ]);
 
   const saveCheckIn = () => {
     if (!selectedMood) return;
 
-    const newCheckIn: EmotionalCheckIn = {
+    const newCheckIn: EmotionalCheckInType = {
       id: Date.now().toString(),
       studentId: 'current-student',
       mood: selectedMood as any,
       energyLevel: energyLevel[0],
       notes: notes.trim() || undefined,
-      createdAt: new Date()
+      createdAt: new Date(),
     };
 
     setCheckIns([newCheckIn, ...checkIns]);
@@ -80,27 +80,27 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
   };
 
   const getMoodIcon = (mood: string) => {
-    const option = moodOptions.find(opt => opt.value === mood);
+    const option = moodOptions.find((opt) => opt.value === mood);
     return option ? option.icon : Meh;
   };
 
   const getMoodColor = (mood: string) => {
-    const option = moodOptions.find(opt => opt.value === mood);
+    const option = moodOptions.find((opt) => opt.value === mood);
     return option ? option.color : 'text-[#4A4A4A]';
   };
 
   const getMoodBg = (mood: string) => {
-    const option = moodOptions.find(opt => opt.value === mood);
+    const option = moodOptions.find((opt) => opt.value === mood);
     return option ? option.bg : 'bg-gray-50';
   };
 
   const formatTimeAgo = (date: Date) => {
     const now = new Date();
     const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
-    
+
     if (diffInHours < 1) return 'Agora mesmo';
     if (diffInHours < 24) return `${diffInHours}h atrás`;
-    
+
     const diffInDays = Math.floor(diffInHours / 24);
     return `${diffInDays} dia${diffInDays > 1 ? 's' : ''} atrás`;
   };
@@ -120,7 +120,10 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
               {checkIns.map((checkIn) => {
                 const MoodIcon = getMoodIcon(checkIn.mood);
                 return (
-                  <Card key={checkIn.id} className="bg-white border-l-4 border-l-[#FFC300] border border-[#E6C85C] rounded-2xl">
+                  <Card
+                    key={checkIn.id}
+                    className="bg-white border-l-4 border-l-[#FFC300] border border-[#E6C85C] rounded-2xl"
+                  >
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-4">
@@ -130,7 +133,7 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
                           <div>
                             <h3 className="font-bold text-[#0A0A0A] text-lg">João Silva</h3>
                             <p className="text-sm text-[#4A4A4A] font-medium">
-                              {moodOptions.find(opt => opt.value === checkIn.mood)?.label}
+                              {moodOptions.find((opt) => opt.value === checkIn.mood)?.label}
                             </p>
                           </div>
                         </div>
@@ -146,7 +149,7 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
                           </div>
                         </div>
                       </div>
-                      
+
                       {checkIn.notes && (
                         <div className="bg-[#FFF3C4] p-4 rounded-2xl border border-[#E6C85C] mb-4">
                           <p className="text-sm text-[#0A0A0A] font-medium">{checkIn.notes}</p>
@@ -225,10 +228,14 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
                         : 'border-[#E6C85C] hover:border-[#FFC300] bg-white'
                     }`}
                   >
-                    <Icon className={`w-8 h-8 mx-auto mb-3 ${
-                      selectedMood === option.value ? option.color : 'text-[#4A4A4A]'
-                    }`} />
-                    <div className="text-sm font-semibold text-[#0A0A0A]">{option.label}</div>
+                    <Icon
+                      className={`w-8 h-8 mx-auto mb-3 ${
+                        selectedMood === option.value ? option.color : 'text-[#4A4A4A]'
+                      }`}
+                    />
+                    <div className="text-sm font-semibold text-[#0A0A0A]">
+                      {option.label}
+                    </div>
                   </button>
                 );
               })}
@@ -241,7 +248,9 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
               <h3 className="text-sm font-bold text-[#0A0A0A]">Nível de energia</h3>
               <div className="flex items-center gap-2">
                 <Battery className="w-5 h-5 text-[#FFC300]" />
-                <span className="text-lg font-bold text-[#0A0A0A]">{energyLevel[0]}/10</span>
+                <span className="text-lg font-bold text-[#0A0A0A]">
+                  {energyLevel[0]}/10
+                </span>
               </div>
             </div>
             <Slider
@@ -272,7 +281,7 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
             />
           </div>
 
-          <Button 
+          <Button
             onClick={saveCheckIn}
             disabled={!selectedMood}
             className="w-full bg-[#E10600] hover:bg-[#C00000] text-white font-bold py-4 rounded-2xl transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#0A0A0A] focus:ring-offset-2 text-lg"
@@ -296,14 +305,17 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
             {checkIns.map((checkIn) => {
               const MoodIcon = getMoodIcon(checkIn.mood);
               return (
-                <div key={checkIn.id} className="flex items-start gap-4 p-6 bg-[#FFF3C4] rounded-2xl border border-[#E6C85C]">
+                <div
+                  key={checkIn.id}
+                  className="flex items-start gap-4 p-6 bg-[#FFF3C4] rounded-2xl border border-[#E6C85C]"
+                >
                   <div className={`p-3 rounded-2xl ${getMoodBg(checkIn.mood)}`}>
                     <MoodIcon className={`w-6 h-6 ${getMoodColor(checkIn.mood)}`} />
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-3">
                       <span className="font-bold text-[#0A0A0A] text-lg">
-                        {moodOptions.find(opt => opt.value === checkIn.mood)?.label}
+                        {moodOptions.find((opt) => opt.value === checkIn.mood)?.label}
                       </span>
                       <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2">
@@ -318,7 +330,9 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
                       </div>
                     </div>
                     {checkIn.notes && (
-                      <p className="text-sm text-[#4A4A4A] font-medium">{checkIn.notes}</p>
+                      <p className="text-sm text-[#4A4A4A] font-medium">
+                        {checkIn.notes}
+                      </p>
                     )}
                   </div>
                 </div>

@@ -60,17 +60,29 @@ interface TeacherRegistrationLinkProps {
   userRole: 'trainer' | 'student';
 }
 
+// 🔧 TIPOS CERTINHOS PRO FORM
+type FitnessLevel = 'beginner' | 'intermediate' | 'advanced';
+
+type RegistrationForm = {
+  name: string;
+  email: string;
+  phone: string;
+  birthDate: string;
+  goals: string;
+  fitnessLevel: FitnessLevel;
+};
+
 export default function TeacherRegistrationLink({ userRole }: TeacherRegistrationLinkProps) {
   const [activeTab, setActiveTab] = useState('link');
   const [linkCopied, setLinkCopied] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [registrationForm, setRegistrationForm] = useState({
+  const [registrationForm, setRegistrationForm] = useState<RegistrationForm>({
     name: '',
     email: '',
     phone: '',
     birthDate: '',
     goals: '',
-    fitnessLevel: 'beginner' as const
+    fitnessLevel: 'beginner',
   });
 
   // Dados simulados do professor
@@ -211,16 +223,14 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
   };
 
   const handleStudentRegistration = () => {
-    // Simular cadastro de novo aluno
     console.log('Novo aluno cadastrado:', registrationForm);
-    // Reset form
     setRegistrationForm({
       name: '',
       email: '',
       phone: '',
       birthDate: '',
       goals: '',
-      fitnessLevel: 'beginner'
+      fitnessLevel: 'beginner',
     });
     alert('Aluno cadastrado com sucesso! Ele foi automaticamente vinculado à sua conta.');
   };
@@ -233,7 +243,6 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
   };
 
   const shareToInstagram = () => {
-    // Para Instagram, copiamos o link e orientamos o usuário
     copyToClipboard(teacher.registrationLink);
     alert('Link copiado! Cole no seu story ou bio do Instagram para compartilhar com seus seguidores.');
   };
@@ -284,7 +293,6 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
 
         {/* Meu Link Tab */}
         <TabsContent value="link" className="space-y-6">
-          {/* Link Principal */}
           <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">
@@ -725,7 +733,7 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
                     <Label className="text-[#0A0A0A] font-medium">Nível de Treino *</Label>
                     <Select 
                       value={registrationForm.fitnessLevel} 
-                      onValueChange={(value: 'beginner' | 'intermediate' | 'advanced') => 
+                      onValueChange={(value: FitnessLevel) => 
                         setRegistrationForm({...registrationForm, fitnessLevel: value})
                       }
                     >
@@ -774,7 +782,6 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
 
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
-          {/* Métricas de Conversão */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
               <CardContent className="p-6">
@@ -819,7 +826,6 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
             </Card>
           </div>
 
-          {/* Origem dos Cadastros */}
           <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">
@@ -861,7 +867,6 @@ export default function TeacherRegistrationLink({ userRole }: TeacherRegistratio
             </CardContent>
           </Card>
 
-          {/* Evolução Mensal */}
           <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">

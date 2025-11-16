@@ -16,7 +16,7 @@ import {
   TrendingUp,
   Save
 } from 'lucide-react';
-import type { EmotionalCheckIn } from '@/lib/types';
+import { EmotionalCheckIn } from '@/lib/types';
 
 interface EmotionalCheckInProps {
   userRole: 'trainer' | 'student';
@@ -203,7 +203,7 @@ export default function EmotionalCheckIn({ userRole }: EmotionalCheckInProps) {
       {/* New Check-in */}
       <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items=center gap-3 text-[#0A0A0A] text-xl">
+          <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">
             <Heart className="w-6 h-6 text-[#E10600]" />
             Como você está se sentindo hoje?
           </CardTitle>

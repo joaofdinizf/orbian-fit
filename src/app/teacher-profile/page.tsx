@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -106,14 +106,6 @@ export default function TeacherProfilePage() {
   const [aiOptimizing, setAiOptimizing] = useState(false);
   const [filterLeads, setFilterLeads] = useState('all');
   const [searchLeads, setSearchLeads] = useState('');
-  const [origin, setOrigin] = useState(''); // 👈 origem segura pro SSR
-
-  // garante que só usa window no client
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setOrigin(window.location.origin);
-    }
-  }, []);
 
   // Mock data - em produção viria do banco de dados
   const [profile, setProfile] = useState<TeacherProfile>({
@@ -230,12 +222,14 @@ export default function TeacherProfilePage() {
 
   const handleSaveProfile = () => {
     setIsEditing(false);
+    // Aqui salvaria no banco de dados
     console.log('Perfil salvo:', profile);
   };
 
   const handleAiOptimization = async () => {
     setAiOptimizing(true);
     
+    // Simulação da otimização por IA
     setTimeout(() => {
       const optimizedBio = `Personal trainer especializado em transformação corporal com metodologia científica comprovada. Com mais de 8 anos de experiência, já ajudei centenas de alunos a alcançarem seus objetivos através de treinos personalizados e acompanhamento individualizado. 
 
@@ -255,20 +249,10 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
     }, 3000);
   };
 
-  const getBaseUrl = () => origin || 'https://orbianfit.com';
-
   const copyProfileLink = () => {
-    const link = `${getBaseUrl()}/teacher-profile/public/${profile.id}`;
-    if (typeof navigator !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(link);
-      alert('Link copiado para a área de transferência!');
-    }
-  };
-
-  const openPublicProfile = () => {
-    if (typeof window !== 'undefined') {
-      window.open(`/teacher-profile/public/${profile.id}`, '_blank');
-    }
+    const link = `${window.location.origin}/teacher-profile/public/${profile.id}`;
+    navigator.clipboard.writeText(link);
+    alert('Link copiado para a área de transferência!');
   };
 
   const updateLeadStatus = (leadId: string, newStatus: Lead['status']) => {
@@ -750,7 +734,7 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
                     Copiar Link
                   </Button>
                   <Button
-                    onClick={openPublicProfile}
+                    onClick={() => window.open(`/teacher-profile/public/${profile.id}`, '_blank')}
                     className="bg-[#E10600] hover:bg-[#C00000] text-white rounded-xl"
                   >
                     <ExternalLink className="w-4 h-4 mr-2" />
@@ -762,7 +746,7 @@ Minha abordagem combina conhecimento técnico avançado com motivação constant
                 <div className="bg-[#FFF3C4] p-4 rounded-xl border border-[#FFC300]">
                   <p className="text-[#0A0A0A] font-medium mb-2">Link da sua página pública:</p>
                   <code className="text-sm bg-white p-2 rounded border text-[#4A4A4A] block">
-                    {getBaseUrl()}/teacher-profile/public/{profile.id}
+                    {window.location.origin}/teacher-profile/public/{profile.id}
                   </code>
                 </div>
 

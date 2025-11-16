@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,19 +8,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import {
-  Link,
-  Copy,
-  Users,
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { 
+  Link, 
+  Copy, 
+  Users, 
   UserPlus,
   Share2,
+  QrCode,
   CheckCircle,
   Calendar,
   Mail,
@@ -30,9 +25,12 @@ import {
   ExternalLink,
   MessageCircle,
   Instagram,
+  Send,
   User,
+  Award,
   Clock,
-  BarChart3,
+  MapPin,
+  BarChart3
 } from 'lucide-react';
 
 interface Student {
@@ -62,23 +60,17 @@ interface TeacherRegistrationLinkProps {
   userRole: 'trainer' | 'student';
 }
 
-export default function TeacherRegistrationLink({
-  userRole,
-}: TeacherRegistrationLinkProps) {
-  const isTrainer = userRole === 'trainer';
-
+export default function TeacherRegistrationLink({ userRole }: TeacherRegistrationLinkProps) {
   const [activeTab, setActiveTab] = useState('link');
   const [linkCopied, setLinkCopied] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-
-  // estado do formulário SEM TIPAGEM CHATA
-  const [registrationForm, setRegistrationForm] = useState<any>({
+  const [registrationForm, setRegistrationForm] = useState({
     name: '',
     email: '',
     phone: '',
     birthDate: '',
     goals: '',
-    fitnessLevel: 'beginner',
+    fitnessLevel: 'beginner' as const
   });
 
   // Dados simulados do professor
@@ -86,13 +78,8 @@ export default function TeacherRegistrationLink({
     id: 'teacher-1',
     name: 'Carlos Silva',
     specialties: ['Musculação', 'Funcional', 'Emagrecimento'],
-    registrationLink: `${
-      typeof window !== 'undefined'
-        ? window.location.origin
-        : 'https://orbianfit.com'
-    }/cadastro/professor/carlos-silva-abc123`,
-    qrCode:
-      'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZiIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzMzMyI+UVIgQ29kZTwvdGV4dD4KPC9zdmc+',
+    registrationLink: `${typeof window !== 'undefined' ? window.location.origin : 'https://orbianfit.com'}/cadastro/professor/carlos-silva-abc123`,
+    qrCode: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KICA8cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZiIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTAwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBkeT0iLjNlbSIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzMzMyI+UVIgQ29kZTwvdGV4dD4KPC9zdmc+',
     students: [
       {
         id: '1',
@@ -105,7 +92,7 @@ export default function TeacherRegistrationLink({
         registrationDate: '2024-01-10',
         status: 'active',
         avatar: '👨',
-        source: 'whatsapp',
+        source: 'whatsapp'
       },
       {
         id: '2',
@@ -118,7 +105,7 @@ export default function TeacherRegistrationLink({
         registrationDate: '2024-01-12',
         status: 'active',
         avatar: '👩',
-        source: 'instagram',
+        source: 'instagram'
       },
       {
         id: '3',
@@ -130,7 +117,7 @@ export default function TeacherRegistrationLink({
         registrationDate: '2024-01-15',
         status: 'pending',
         avatar: '👨',
-        source: 'direct',
+        source: 'direct'
       },
       {
         id: '4',
@@ -143,9 +130,9 @@ export default function TeacherRegistrationLink({
         registrationDate: '2024-01-18',
         status: 'active',
         avatar: '👩',
-        source: 'referral',
-      },
-    ],
+        source: 'referral'
+      }
+    ]
   };
 
   const copyToClipboard = (text: string) => {
@@ -224,32 +211,31 @@ export default function TeacherRegistrationLink({
   };
 
   const handleStudentRegistration = () => {
+    // Simular cadastro de novo aluno
     console.log('Novo aluno cadastrado:', registrationForm);
+    // Reset form
     setRegistrationForm({
       name: '',
       email: '',
       phone: '',
       birthDate: '',
       goals: '',
-      fitnessLevel: 'beginner',
+      fitnessLevel: 'beginner'
     });
-    alert(
-      'Aluno cadastrado com sucesso! Ele foi automaticamente vinculado à sua conta.'
-    );
+    alert('Aluno cadastrado com sucesso! Ele foi automaticamente vinculado à sua conta.');
   };
 
   const shareToWhatsApp = () => {
     const message = `🏋️‍♂️ Olá! Sou o personal trainer ${teacher.name}.\n\nConvido você para fazer parte da minha equipe de alunos!\n\n✅ Treinos personalizados\n✅ Acompanhamento profissional\n✅ Resultados garantidos\n\nCadastre-se pelo meu link exclusivo:\n${teacher.registrationLink}\n\nVamos juntos alcançar seus objetivos! 💪`;
-
+    
     const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
     window.open(whatsappUrl, '_blank');
   };
 
   const shareToInstagram = () => {
+    // Para Instagram, copiamos o link e orientamos o usuário
     copyToClipboard(teacher.registrationLink);
-    alert(
-      'Link copiado! Cole no seu story ou bio do Instagram para compartilhar com seus seguidores.'
-    );
+    alert('Link copiado! Cole no seu story ou bio do Instagram para compartilhar com seus seguidores.');
   };
 
   return (
@@ -260,37 +246,35 @@ export default function TeacherRegistrationLink({
           🔗 Link de Cadastro do Professor
         </h1>
         <p className="text-white/80 text-lg">
-          {isTrainer
-            ? 'Gerencie seu link exclusivo e acompanhe novos alunos'
-            : 'Veja como funciona o cadastro com seu professor'}
+          Gerencie seu link exclusivo e acompanhe novos alunos
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
         <TabsList className="grid w-full grid-cols-4 bg-white border-2 border-[#E6C85C] rounded-2xl p-2">
-          <TabsTrigger
-            value="link"
+          <TabsTrigger 
+            value="link" 
             className="flex items-center gap-2 data-[state=active]:bg-[#FFC300] data-[state=active]:text-[#0A0A0A] rounded-xl font-medium"
           >
             <Link className="w-4 h-4" />
             <span className="hidden sm:inline">Meu Link</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="students"
+          <TabsTrigger 
+            value="students" 
             className="flex items-center gap-2 data-[state=active]:bg-[#FFC300] data-[state=active]:text-[#0A0A0A] rounded-xl font-medium"
           >
             <Users className="w-4 h-4" />
             <span className="hidden sm:inline">Alunos</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="register"
+          <TabsTrigger 
+            value="register" 
             className="flex items-center gap-2 data-[state=active]:bg-[#FFC300] data-[state=active]:text-[#0A0A0A] rounded-xl font-medium"
           >
             <UserPlus className="w-4 h-4" />
             <span className="hidden sm:inline">Cadastrar</span>
           </TabsTrigger>
-          <TabsTrigger
-            value="analytics"
+          <TabsTrigger 
+            value="analytics" 
             className="flex items-center gap-2 data-[state=active]:bg-[#FFC300] data-[state=active]:text-[#0A0A0A] rounded-xl font-medium"
           >
             <TrendingUp className="w-4 h-4" />
@@ -300,6 +284,7 @@ export default function TeacherRegistrationLink({
 
         {/* Meu Link Tab */}
         <TabsContent value="link" className="space-y-6">
+          {/* Link Principal */}
           <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">
@@ -311,9 +296,7 @@ export default function TeacherRegistrationLink({
               <div className="p-4 bg-[#FFF3C4] rounded-2xl border border-[#E6C85C]">
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex-1">
-                    <p className="text-sm text-[#4A4A4A] mb-2">
-                      Link personalizado:
-                    </p>
+                    <p className="text-sm text-[#4A4A4A] mb-2">Link personalizado:</p>
                     <p className="text-[#0A0A0A] font-mono text-sm break-all">
                       {teacher.registrationLink}
                     </p>
@@ -342,9 +325,9 @@ export default function TeacherRegistrationLink({
                 <div className="text-center">
                   <h3 className="font-bold text-[#0A0A0A] mb-4">QR Code</h3>
                   <div className="bg-white p-4 rounded-2xl border-2 border-[#E6C85C] inline-block">
-                    <img
-                      src={teacher.qrCode}
-                      alt="QR Code do Link de Cadastro"
+                    <img 
+                      src={teacher.qrCode} 
+                      alt="QR Code do Link de Cadastro" 
                       className="w-32 h-32"
                     />
                   </div>
@@ -356,7 +339,7 @@ export default function TeacherRegistrationLink({
                 {/* Compartilhamento */}
                 <div className="space-y-4">
                   <h3 className="font-bold text-[#0A0A0A]">Compartilhar</h3>
-
+                  
                   <Button
                     onClick={shareToWhatsApp}
                     className="w-full bg-[#25D366] hover:bg-[#1DA851] text-white font-medium py-3 rounded-xl"
@@ -364,7 +347,7 @@ export default function TeacherRegistrationLink({
                     <MessageCircle className="w-5 h-5 mr-3" />
                     Compartilhar no WhatsApp
                   </Button>
-
+                  
                   <Button
                     onClick={shareToInstagram}
                     className="w-full bg-[#E4405F] hover:bg-[#C13584] text-white font-medium py-3 rounded-xl"
@@ -372,7 +355,7 @@ export default function TeacherRegistrationLink({
                     <Instagram className="w-5 h-5 mr-3" />
                     Compartilhar no Instagram
                   </Button>
-
+                  
                   <Button
                     onClick={() => copyToClipboard(teacher.registrationLink)}
                     className="w-full bg-[#0A0A0A] hover:bg-[#2A2A2A] text-white font-medium py-3 rounded-xl"
@@ -457,7 +440,7 @@ export default function TeacherRegistrationLink({
                       Alunos Ativos
                     </p>
                     <p className="text-3xl font-bold text-[#0A0A0A]">
-                      {teacher.students.filter((s) => s.status === 'active').length}
+                      {teacher.students.filter(s => s.status === 'active').length}
                     </p>
                   </div>
                   <CheckCircle className="w-8 h-8 text-[#1FBF75]" />
@@ -473,7 +456,7 @@ export default function TeacherRegistrationLink({
                       Pendentes
                     </p>
                     <p className="text-3xl font-bold text-[#0A0A0A]">
-                      {teacher.students.filter((s) => s.status === 'pending').length}
+                      {teacher.students.filter(s => s.status === 'pending').length}
                     </p>
                   </div>
                   <Clock className="w-8 h-8 text-[#FFC300]" />
@@ -489,13 +472,9 @@ export default function TeacherRegistrationLink({
                       Este Mês
                     </p>
                     <p className="text-3xl font-bold text-[#0A0A0A]">
-                      {
-                        teacher.students.filter(
-                          (s) =>
-                            new Date(s.registrationDate).getMonth() ===
-                            new Date().getMonth()
-                        ).length
-                      }
+                      {teacher.students.filter(s => 
+                        new Date(s.registrationDate).getMonth() === new Date().getMonth()
+                      ).length}
                     </p>
                   </div>
                   <Calendar className="w-8 h-8 text-[#E10600]" />
@@ -515,7 +494,7 @@ export default function TeacherRegistrationLink({
             <CardContent>
               <div className="space-y-4">
                 {teacher.students.map((student) => (
-                  <div
+                  <div 
                     key={student.id}
                     className="flex items-center justify-between p-4 bg-[#FFF3C4] rounded-2xl border border-[#E6C85C] hover:shadow-md transition-all duration-300"
                   >
@@ -523,21 +502,17 @@ export default function TeacherRegistrationLink({
                       <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-xl shadow-md">
                         {student.avatar}
                       </div>
-
+                      
                       <div>
                         <div className="flex items-center gap-3 mb-1">
                           <h4 className="font-bold text-[#0A0A0A]">
                             {student.name}
                           </h4>
-                          <Badge
-                            className={`${getStatusBadge(
-                              student.status
-                            )} font-medium px-2 py-1 rounded-lg text-xs`}
-                          >
+                          <Badge className={`${getStatusBadge(student.status)} font-medium px-2 py-1 rounded-lg text-xs`}>
                             {getStatusLabel(student.status)}
                           </Badge>
                         </div>
-
+                        
                         <div className="flex items-center gap-4 text-sm text-[#4A4A4A]">
                           <div className="flex items-center gap-1">
                             <Mail className="w-3 h-3" />
@@ -551,9 +526,7 @@ export default function TeacherRegistrationLink({
                           )}
                           <div className="flex items-center gap-1">
                             <Calendar className="w-3 h-3" />
-                            {new Date(
-                              student.registrationDate
-                            ).toLocaleDateString('pt-BR')}
+                            {new Date(student.registrationDate).toLocaleDateString('pt-BR')}
                           </div>
                         </div>
                       </div>
@@ -569,14 +542,14 @@ export default function TeacherRegistrationLink({
                           </span>
                         </div>
                       </div>
-
+                      
                       <div className="text-center">
                         <p className="text-xs text-[#4A4A4A]">Nível</p>
                         <p className="text-sm font-medium text-[#0A0A0A]">
                           {getFitnessLevelLabel(student.fitnessLevel)}
                         </p>
                       </div>
-
+                      
                       <Button
                         onClick={() => setSelectedStudent(student)}
                         className="bg-[#FFC300] hover:bg-[#E6C85C] text-[#0A0A0A] font-medium px-4 py-2 rounded-xl"
@@ -618,11 +591,7 @@ export default function TeacherRegistrationLink({
                         <h3 className="text-xl font-bold text-[#0A0A0A]">
                           {selectedStudent.name}
                         </h3>
-                        <Badge
-                          className={`${getStatusBadge(
-                            selectedStudent.status
-                          )} font-medium px-3 py-1 rounded-xl`}
-                        >
+                        <Badge className={`${getStatusBadge(selectedStudent.status)} font-medium px-3 py-1 rounded-xl`}>
                           {getStatusLabel(selectedStudent.status)}
                         </Badge>
                       </div>
@@ -633,9 +602,7 @@ export default function TeacherRegistrationLink({
                         <Mail className="w-5 h-5 text-[#4A4A4A]" />
                         <div>
                           <p className="text-sm text-[#4A4A4A]">Email</p>
-                          <p className="font-medium text-[#0A0A0A]">
-                            {selectedStudent.email}
-                          </p>
+                          <p className="font-medium text-[#0A0A0A]">{selectedStudent.email}</p>
                         </div>
                       </div>
 
@@ -644,9 +611,7 @@ export default function TeacherRegistrationLink({
                           <Phone className="w-5 h-5 text-[#4A4A4A]" />
                           <div>
                             <p className="text-sm text-[#4A4A4A]">Telefone</p>
-                            <p className="font-medium text-[#0A0A0A]">
-                              {selectedStudent.phone}
-                            </p>
+                            <p className="font-medium text-[#0A0A0A]">{selectedStudent.phone}</p>
                           </div>
                         </div>
                       )}
@@ -654,13 +619,9 @@ export default function TeacherRegistrationLink({
                       <div className="flex items-center gap-3 p-3 bg-[#FFF3C4] rounded-xl">
                         <Calendar className="w-5 h-5 text-[#4A4A4A]" />
                         <div>
-                          <p className="text-sm text-[#4A4A4A]">
-                            Data de Nascimento
-                          </p>
+                          <p className="text-sm text-[#4A4A4A]">Data de Nascimento</p>
                           <p className="font-medium text-[#0A0A0A]">
-                            {new Date(
-                              selectedStudent.birthDate
-                            ).toLocaleDateString('pt-BR')}
+                            {new Date(selectedStudent.birthDate).toLocaleDateString('pt-BR')}
                           </p>
                         </div>
                       </div>
@@ -680,7 +641,7 @@ export default function TeacherRegistrationLink({
                           {getFitnessLevelLabel(selectedStudent.fitnessLevel)}
                         </p>
                       </div>
-
+                      
                       <div className="p-3 bg-[#FFF3C4] rounded-xl text-center">
                         <p className="text-sm text-[#4A4A4A]">Origem</p>
                         <div className="flex items-center justify-center gap-1">
@@ -695,9 +656,7 @@ export default function TeacherRegistrationLink({
                     <div className="p-3 bg-[#FFF3C4] rounded-xl text-center">
                       <p className="text-sm text-[#4A4A4A]">Cadastrado em</p>
                       <p className="font-bold text-[#0A0A0A]">
-                        {new Date(
-                          selectedStudent.registrationDate
-                        ).toLocaleDateString('pt-BR')}
+                        {new Date(selectedStudent.registrationDate).toLocaleDateString('pt-BR')}
                       </p>
                     </div>
                   </div>
@@ -720,17 +679,10 @@ export default function TeacherRegistrationLink({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-[#0A0A0A] font-medium">
-                      Nome Completo *
-                    </Label>
+                    <Label className="text-[#0A0A0A] font-medium">Nome Completo *</Label>
                     <Input
                       value={registrationForm.name}
-                      onChange={(e) =>
-                        setRegistrationForm({
-                          ...registrationForm,
-                          name: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setRegistrationForm({...registrationForm, name: e.target.value})}
                       placeholder="Digite o nome completo"
                       className="border-2 border-[#E6C85C] rounded-xl"
                     />
@@ -741,12 +693,7 @@ export default function TeacherRegistrationLink({
                     <Input
                       type="email"
                       value={registrationForm.email}
-                      onChange={(e) =>
-                        setRegistrationForm({
-                          ...registrationForm,
-                          email: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setRegistrationForm({...registrationForm, email: e.target.value})}
                       placeholder="Digite o email"
                       className="border-2 border-[#E6C85C] rounded-xl"
                     />
@@ -756,30 +703,18 @@ export default function TeacherRegistrationLink({
                     <Label className="text-[#0A0A0A] font-medium">Telefone</Label>
                     <Input
                       value={registrationForm.phone}
-                      onChange={(e) =>
-                        setRegistrationForm({
-                          ...registrationForm,
-                          phone: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setRegistrationForm({...registrationForm, phone: e.target.value})}
                       placeholder="(11) 99999-9999"
                       className="border-2 border-[#E6C85C] rounded-xl"
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[#0A0A0A] font-medium">
-                      Data de Nascimento *
-                    </Label>
+                    <Label className="text-[#0A0A0A] font-medium">Data de Nascimento *</Label>
                     <Input
                       type="date"
                       value={registrationForm.birthDate}
-                      onChange={(e) =>
-                        setRegistrationForm({
-                          ...registrationForm,
-                          birthDate: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setRegistrationForm({...registrationForm, birthDate: e.target.value})}
                       className="border-2 border-[#E6C85C] rounded-xl"
                     />
                   </div>
@@ -787,16 +722,11 @@ export default function TeacherRegistrationLink({
 
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <Label className="text-[#0A0A0A] font-medium">
-                      Nível de Treino *
-                    </Label>
-                    <Select
-                      value={registrationForm.fitnessLevel}
-                      onValueChange={(value) =>
-                        setRegistrationForm({
-                          ...registrationForm,
-                          fitnessLevel: value,
-                        })
+                    <Label className="text-[#0A0A0A] font-medium">Nível de Treino *</Label>
+                    <Select 
+                      value={registrationForm.fitnessLevel} 
+                      onValueChange={(value: 'beginner' | 'intermediate' | 'advanced') => 
+                        setRegistrationForm({...registrationForm, fitnessLevel: value})
                       }
                     >
                       <SelectTrigger className="border-2 border-[#E6C85C] rounded-xl">
@@ -804,26 +734,17 @@ export default function TeacherRegistrationLink({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="beginner">Iniciante</SelectItem>
-                        <SelectItem value="intermediate">
-                          Intermediário
-                        </SelectItem>
+                        <SelectItem value="intermediate">Intermediário</SelectItem>
                         <SelectItem value="advanced">Avançado</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[#0A0A0A] font-medium">
-                      Objetivos *
-                    </Label>
+                    <Label className="text-[#0A0A0A] font-medium">Objetivos *</Label>
                     <Textarea
                       value={registrationForm.goals}
-                      onChange={(e) =>
-                        setRegistrationForm({
-                          ...registrationForm,
-                          goals: e.target.value,
-                        })
-                      }
+                      onChange={(e) => setRegistrationForm({...registrationForm, goals: e.target.value})}
                       placeholder="Descreva os objetivos do aluno (ex: ganhar massa muscular, emagrecer, melhorar condicionamento...)"
                       className="border-2 border-[#E6C85C] rounded-xl min-h-[120px]"
                     />
@@ -832,21 +753,15 @@ export default function TeacherRegistrationLink({
                   <div className="p-4 bg-[#FFF3C4] rounded-2xl border border-[#E6C85C]">
                     <p className="text-[#0A0A0A] font-medium mb-2">ℹ️ Informação</p>
                     <p className="text-[#4A4A4A] text-sm">
-                      Ao cadastrar este aluno, ele será automaticamente vinculado à
-                      sua conta e poderá acessar a plataforma com as credenciais
-                      fornecidas.
+                      Ao cadastrar este aluno, ele será automaticamente vinculado à sua conta 
+                      e poderá acessar a plataforma com as credenciais fornecidas.
                     </p>
                   </div>
 
                   <Button
                     onClick={handleStudentRegistration}
                     className="w-full bg-[#E10600] hover:bg-[#C00000] text-white font-semibold py-3 rounded-2xl"
-                    disabled={
-                      !registrationForm.name ||
-                      !registrationForm.email ||
-                      !registrationForm.birthDate ||
-                      !registrationForm.goals
-                    }
+                    disabled={!registrationForm.name || !registrationForm.email || !registrationForm.birthDate || !registrationForm.goals}
                   >
                     <UserPlus className="w-5 h-5 mr-2" />
                     Cadastrar Aluno
@@ -859,6 +774,7 @@ export default function TeacherRegistrationLink({
 
         {/* Analytics Tab */}
         <TabsContent value="analytics" className="space-y-6">
+          {/* Métricas de Conversão */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
               <CardContent className="p-6">
@@ -903,6 +819,7 @@ export default function TeacherRegistrationLink({
             </Card>
           </div>
 
+          {/* Origem dos Cadastros */}
           <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">
@@ -916,25 +833,20 @@ export default function TeacherRegistrationLink({
                   { source: 'whatsapp', label: 'WhatsApp', count: 2, percentage: 50 },
                   { source: 'instagram', label: 'Instagram', count: 1, percentage: 25 },
                   { source: 'direct', label: 'Link Direto', count: 1, percentage: 25 },
-                  { source: 'referral', label: 'Indicação', count: 1, percentage: 25 },
+                  { source: 'referral', label: 'Indicação', count: 1, percentage: 25 }
                 ].map((item) => (
-                  <div
-                    key={item.source}
-                    className="flex items-center justify-between p-4 bg-[#FFF3C4] rounded-2xl"
-                  >
+                  <div key={item.source} className="flex items-center justify-between p-4 bg-[#FFF3C4] rounded-2xl">
                     <div className="flex items-center gap-4">
                       {getSourceIcon(item.source)}
                       <div>
                         <h4 className="font-bold text-[#0A0A0A]">{item.label}</h4>
-                        <p className="text-sm text-[#4A4A4A]">
-                          {item.count} cadastros
-                        </p>
+                        <p className="text-sm text-[#4A4A4A]">{item.count} cadastros</p>
                       </div>
                     </div>
-
+                    
                     <div className="flex items-center gap-4">
                       <div className="w-32 bg-[#E6C85C] rounded-full h-3">
-                        <div
+                        <div 
                           className="bg-[#FFC300] h-3 rounded-full transition-all duration-300"
                           style={{ width: `${item.percentage}%` }}
                         ></div>
@@ -949,6 +861,7 @@ export default function TeacherRegistrationLink({
             </CardContent>
           </Card>
 
+          {/* Evolução Mensal */}
           <Card className="bg-white border-2 border-[#E6C85C] shadow-lg rounded-2xl">
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center gap-3 text-[#0A0A0A] text-xl">
@@ -962,12 +875,9 @@ export default function TeacherRegistrationLink({
                   { month: 'Out/23', count: 2 },
                   { month: 'Nov/23', count: 3 },
                   { month: 'Dez/23', count: 1 },
-                  { month: 'Jan/24', count: 4 },
+                  { month: 'Jan/24', count: 4 }
                 ].map((item, index) => (
-                  <div
-                    key={index}
-                    className="text-center p-4 bg-[#FFF3C4] rounded-2xl"
-                  >
+                  <div key={index} className="text-center p-4 bg-[#FFF3C4] rounded-2xl">
                     <p className="text-sm text-[#4A4A4A] mb-2">{item.month}</p>
                     <p className="text-2xl font-bold text-[#0A0A0A]">{item.count}</p>
                     <p className="text-xs text-[#4A4A4A]">cadastros</p>

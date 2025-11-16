@@ -3,16 +3,19 @@ import { createClient } from '@/lib/supabase/server';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: any
 ) {
   try {
     console.log('🔧 [PATCH /api/admin/users/[id]] Iniciando atualização de usuário...');
-    
+
     const supabase = await createClient();
-    
+
     // Verificar autenticação
-    const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-    
+    const {
+      data: { user: authUser },
+      error: authError,
+    } = await supabase.auth.getUser();
+
     if (authError || !authUser) {
       console.log('❌ [PATCH /api/admin/users/[id]] Não autenticado');
       return NextResponse.json(
@@ -68,18 +71,17 @@ export async function PATCH(
     }
 
     console.log('✅ [PATCH /api/admin/users/[id]] Usuário atualizado com sucesso');
-    
+
     return NextResponse.json({
       success: true,
       user: updatedUser,
     });
-
   } catch (error) {
     console.error('❌ [PATCH /api/admin/users/[id]] Erro inesperado:', error);
     return NextResponse.json(
-      { 
+      {
         error: 'Erro interno do servidor',
-        details: error instanceof Error ? error.message : 'Erro desconhecido'
+        details: error instanceof Error ? error.message : 'Erro desconhecido',
       },
       { status: 500 }
     );

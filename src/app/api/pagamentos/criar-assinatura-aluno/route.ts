@@ -1,20 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-);
+// ---- Supabase (somente servidor) ----
+const supabaseUrl =
+  process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+if (!supabaseUrl) {
+  throw new Error('SUPABASE_URL (ou NEXT_PUBLIC_SUPABASE_URL) não configurada');
+}
+
+if (!supabaseServiceKey) {
+  throw new Error('SUPABASE_SERVICE_ROLE_KEY não configurada');
+}
+
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+// ---- Mercado Pago ----
 const MERCADO_PAGO_ACCESS_TOKEN = process.env.MERCADO_PAGO_ACCESS_TOKEN!;
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL!;
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { planoSlug } = body;
+    const { planoSlug, userId } = body;
 
-    // TODO: Pegar userId da sessão autenticada
-    const userId = body.userId; // Temporário - implementar auth real
+    // TODO: pegar userId da sessão autenticada
+    // const userId = session.user.id
 
     if (!userId) {
       return NextResponse.json(
@@ -52,25 +64,28 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar assinatura no Mercado Pago
-    const mpResponse = await fetch('https://api.mercadopago.com/preapproval', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${MERCADO_PAGO_ACCESS_TOKEN}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        reason: `${plano.nome_exibicao} - Orbian Fit`,
-        auto_recurring: {
-          frequency: 1,
-          frequency_type: 'months',
-          transaction_amount: plano.preco_mensal,
-          currency_id: 'BRL',
+    const mpResponse = await fetch(
+      'https://api.mercadopago.com/preapproval',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${MERCADO_PAGO_ACCESS_TOKEN}`,
+          'Content-Type': 'application/json',
         },
-        back_url: `${process.env.NEXT_PUBLIC_APP_URL}/assinatura/confirmacao`,
-        payer_email: user.email,
-        external_reference: userId,
-      }),
-    });
+        body: JSON.stringify({
+          reason: `${plano.nome_exibicao} - Orbian Fit`,
+          auto_recurring: {
+            frequency: 1,
+            frequency_type: 'months',
+            transaction_amount: plano.preco_mensal,
+            currency_id: 'BRL',
+          },
+          back_url: `${APP_URL}/assinatura/confirmacao`,
+          payer_email: user.email,
+          external_reference: userId,
+        }),
+      }
+    );
 
     const mpData = await mpResponse.json();
 

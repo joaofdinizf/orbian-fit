@@ -62,18 +62,6 @@ interface TeacherRegistrationLinkProps {
   userRole: 'trainer' | 'student';
 }
 
-// tipos do form
-type FitnessLevel = 'beginner' | 'intermediate' | 'advanced';
-
-type RegistrationForm = {
-  name: string;
-  email: string;
-  phone: string;
-  birthDate: string;
-  goals: string;
-  fitnessLevel: FitnessLevel;
-};
-
 export default function TeacherRegistrationLink({
   userRole,
 }: TeacherRegistrationLinkProps) {
@@ -82,7 +70,9 @@ export default function TeacherRegistrationLink({
   const [activeTab, setActiveTab] = useState('link');
   const [linkCopied, setLinkCopied] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
-  const [registrationForm, setRegistrationForm] = useState<RegistrationForm>({
+
+  // estado do formulário SEM TIPAGEM CHATA
+  const [registrationForm, setRegistrationForm] = useState<any>({
     name: '',
     email: '',
     phone: '',
@@ -411,7 +401,7 @@ export default function TeacherRegistrationLink({
                   </div>
                   <h3 className="font-bold text-[#0A0A0A] mb-2">1. Copie o Link</h3>
                   <p className="text-sm text-[#4A4A4A]">
-                    Use o botão &quot;Copiar&quot; para copiar seu link exclusivo
+                    Use o botão "Copiar" para copiar seu link exclusivo
                   </p>
                 </div>
 
@@ -802,7 +792,7 @@ export default function TeacherRegistrationLink({
                     </Label>
                     <Select
                       value={registrationForm.fitnessLevel}
-                      onValueChange={(value: FitnessLevel) =>
+                      onValueChange={(value) =>
                         setRegistrationForm({
                           ...registrationForm,
                           fitnessLevel: value,
@@ -888,7 +878,7 @@ export default function TeacherRegistrationLink({
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-[#4A0A0A] mb-2">
+                    <p className="text-sm font-medium text-[#4A4A4A] mb-2">
                       Taxa de Conversão
                     </p>
                     <p className="text-3xl font-bold text-[#0A0A0A]">3.1%</p>
@@ -947,7 +937,7 @@ export default function TeacherRegistrationLink({
                         <div
                           className="bg-[#FFC300] h-3 rounded-full transition-all duration-300"
                           style={{ width: `${item.percentage}%` }}
-                        />
+                        ></div>
                       </div>
                       <span className="font-bold text-[#0A0A0A] min-w-[3rem] text-right">
                         {item.percentage}%

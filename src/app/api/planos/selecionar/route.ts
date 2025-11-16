@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
+import { db } from '@/lib/database';
 import { getSession } from '@/lib/auth/session';
 
 export async function POST(request: NextRequest) {
@@ -31,10 +31,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
-
     // Atualizar o plano do usuário
-    const { error: updateError } = await supabase
+    const { error: updateError } = await db
       .from('users')
       .update({ plano_atual_slug: planoSlug })
       .eq('id', session.user.id);
@@ -48,7 +46,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar assinatura (por enquanto sem integração com Mercado Pago)
-    const { error: assinaturaError } = await supabase
+    const { error: assinaturaError } = await db
       .from('assinaturas')
       .insert({
         user_id: session.user.id,

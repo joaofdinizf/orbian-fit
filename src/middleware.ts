@@ -16,10 +16,9 @@ const PUBLIC_ROUTES = [
   '/planos-aluno',
   '/planos-professor',
   '/marketplace',
-  '/teacher-profile/public',
 ];
 
-// Rotas de autenticação
+// Rotas de autenticação (redirecionar se já logado)
 const AUTH_ROUTES = ['/login', '/cadastro-professor', '/cadastro-aluno'];
 
 interface SessionUser {
@@ -39,17 +38,15 @@ interface SessionData {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Permitir acesso a arquivos estáticos, API routes, Next.js internals e arquivos com extensão
+  // Permitir acesso a arquivos estáticos, API routes, Next.js internals
   if (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
     pathname.startsWith('/__nextjs') ||
-    pathname.includes('/webpack-hmr') ||
-    pathname.includes('/_next/static') ||
-    pathname.includes('/_next/image') ||
-    pathname.includes('/favicon') ||
-    pathname.includes('/icon') ||
-    pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|css|js|json|woff|woff2|ttf|eot)$/)
+    pathname.includes('webpack-hmr') ||
+    pathname.includes('hot-update') ||
+    pathname.startsWith('/lasy-bridge') ||
+    pathname.match(/\.(ico|png|jpg|jpeg|svg|gif|webp|css|js|json|woff|woff2|ttf|eot|map)$/)
   ) {
     return NextResponse.next();
   }
@@ -112,13 +109,11 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - api routes
-     * - _next/static (static files)
-     * - _next/image (image optimization)
-     * - _next/webpack-hmr (hot module replacement)
-     * - favicon, icons
-     * - files with extensions (images, fonts, etc)
+     * - api routes (começam com /api/)
+     * - _next internals (começam com /_next/)
+     * - static files (contêm extensão de arquivo)
+     * - webpack HMR
      */
-    '/((?!api|_next/static|_next/image|_next/webpack-hmr|favicon|icon|.*\\..*$).*)',
+    '/((?!api/|_next/|__nextjs|.*\\..*)*)',
   ],
 };

@@ -1,11 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { findUserByEmail, createUser } from '@/lib/database';
 import bcrypt from 'bcryptjs';
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_KEY!
-);
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,11 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Verificar se email já existe
-    const { data: existingUser } = await supabase
-      .from('users')
-      .select('id')
-      .eq('email', email)
-      .single();
+    const existingUser = await findUserByEmail(email);
 
     if (existingUser) {
       return NextResponse.json(
@@ -38,24 +29,19 @@ export async function POST(request: NextRequest) {
     const senhaHash = await bcrypt.hash(senha, 10);
 
     // Criar usuário
-    const { data: newUser, error: createError } = await supabase
-      .from('users')
-      .insert({
-        nome,
-        email,
-        senha_hash: senhaHash,
-        tipo_usuario: 'aluno',
-        telefone: telefone || null,
-        professor_id_vinculado: null,
-        plano_atual_slug: null,
-        is_embaixador: false,
-        origem_cadastro: origemCadastro || 'landing_page',
-      })
-      .select()
-      .single();
+    const newUser = await createUser({
+      nome,
+      email: email.toLowerCase(),
+      senha_hash: senhaHash,
+      tipo_usuario: 'aluno',
+      telefone: telefone || null,
+      professor_id_vinculado: null,
+      plano_atual_slug: null,
+      is_embaixador: false,
+      origem_cadastro: origemCadastro || 'landing_page',
+    });
 
-    if (createError) {
-      console.error('Erro ao criar usuário:', createError);
+    if (!newUser) {
       return NextResponse.json(
         { error: 'Erro ao criar conta' },
         { status: 500 }

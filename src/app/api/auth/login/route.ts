@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSession } from '@/lib/auth/session';
-import { createClient } from '@/lib/supabase/server';
+import { findUserByEmail } from '@/lib/database';
 import bcrypt from 'bcryptjs';
 
 export async function POST(request: NextRequest) {
@@ -14,16 +14,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const supabase = await createClient();
-
     // Buscar usuário no banco
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email.toLowerCase())
-      .single();
+    const user = await findUserByEmail(email);
 
-    if (error || !user) {
+    if (!user) {
       return NextResponse.json(
         { error: 'E-mail ou senha incorretos' },
         { status: 401 }

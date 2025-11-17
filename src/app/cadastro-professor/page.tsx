@@ -71,51 +71,49 @@ export default function CadastroProfessorPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-6xl grid md:grid-cols-2 gap-8 items-center">
         {/* Lado esquerdo - Benefícios */}
         <div className="hidden md:block space-y-6">
           <div className="flex items-center gap-3 mb-8">
-            <img 
-              src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/b4d57c0d-ebec-4a74-a3a6-002c5c2e5f55.png" 
-              alt="Orbian Fit Logo" 
-              className="h-16 w-auto"
-            />
+            <div className="bg-gradient-to-br from-blue-600 to-purple-600 p-3 rounded-2xl">
+              <Dumbbell className="w-8 h-8 text-white" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Orbian Fit
               </h1>
-              <p className="text-gray-600">Conectando personal trainers e alunos de forma inteligente</p>
+              <p className="text-gray-600">Seu treino inteligente</p>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <CheckCircle2 className="w-6 h-6 text-[#EAB308] flex-shrink-0 mt-1" />
+            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">Gestão Completa de Alunos</h3>
                 <p className="text-sm text-gray-600">Controle total de treinos, progresso e evolução</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <CheckCircle2 className="w-6 h-6 text-[#EAB308] flex-shrink-0 mt-1" />
+            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">IA Avançada Orbian</h3>
                 <p className="text-sm text-gray-600">Automações inteligentes para treinos e nutrição</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <CheckCircle2 className="w-6 h-6 text-[#EAB308] flex-shrink-0 mt-1" />
+            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">Relatórios Profissionais</h3>
                 <p className="text-sm text-gray-600">Análises detalhadas e exportação em PDF</p>
               </div>
             </div>
 
-            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-              <CheckCircle2 className="w-6 h-6 text-[#EAB308] flex-shrink-0 mt-1" />
+            <div className="flex items-start gap-3 bg-white p-4 rounded-xl shadow-sm">
+              <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
               <div>
                 <h3 className="font-semibold text-gray-900">Página Pública Personalizada</h3>
                 <p className="text-sm text-gray-600">Atraia novos alunos com sua página profissional</p>
@@ -125,30 +123,30 @@ export default function CadastroProfessorPage() {
         </div>
 
         {/* Lado direito - Formulário */}
-        <Card className="shadow-xl border border-gray-200 bg-white">
+        <Card className="shadow-2xl border-0">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-bold text-gray-900">Cadastro de Professor</CardTitle>
-            <CardDescription className="text-gray-600">
+            <CardTitle className="text-2xl font-bold">Cadastro de Professor</CardTitle>
+            <CardDescription>
               Crie sua conta e comece a transformar vidas
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               {error && (
-                <Alert variant="destructive" className="bg-red-50 border-red-200">
-                  <AlertDescription className="text-red-800">{error}</AlertDescription>
+                <Alert variant="destructive">
+                  <AlertDescription>{error}</AlertDescription>
                 </Alert>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="nome" className="text-gray-700">Nome completo *</Label>
+                <Label htmlFor="nome">Nome completo *</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
                     id="nome"
                     type="text"
                     placeholder="Seu nome completo"
-                    className="pl-10 border-gray-300 focus:border-[#DC2626] focus:ring-[#DC2626]"
+                    className="pl-10"
                     value={formData.nome}
                     onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
                     disabled={loading}
@@ -158,14 +156,14 @@ export default function CadastroProfessorPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-gray-700">E-mail *</Label>
+                <Label htmlFor="email">E-mail *</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
                     id="email"
                     type="email"
                     placeholder="seu@email.com"
-                    className="pl-10 border-gray-300 focus:border-[#DC2626] focus:ring-[#DC2626]"
+                    className="pl-10"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     disabled={loading}
@@ -175,14 +173,14 @@ export default function CadastroProfessorPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="telefone" className="text-gray-700">Telefone (opcional)</Label>
+                <Label htmlFor="telefone">Telefone (opcional)</Label>
                 <div className="relative">
                   <Phone className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
                     id="telefone"
                     type="tel"
                     placeholder="(00) 00000-0000"
-                    className="pl-10 border-gray-300 focus:border-[#DC2626] focus:ring-[#DC2626]"
+                    className="pl-10"
                     value={formData.telefone}
                     onChange={(e) => setFormData({ ...formData, telefone: e.target.value })}
                     disabled={loading}
@@ -191,14 +189,14 @@ export default function CadastroProfessorPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="senha" className="text-gray-700">Senha *</Label>
+                <Label htmlFor="senha">Senha *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
                     id="senha"
                     type="password"
                     placeholder="Mínimo 6 caracteres"
-                    className="pl-10 border-gray-300 focus:border-[#DC2626] focus:ring-[#DC2626]"
+                    className="pl-10"
                     value={formData.senha}
                     onChange={(e) => setFormData({ ...formData, senha: e.target.value })}
                     disabled={loading}
@@ -208,14 +206,14 @@ export default function CadastroProfessorPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmarSenha" className="text-gray-700">Confirmar senha *</Label>
+                <Label htmlFor="confirmarSenha">Confirmar senha *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-3 h-5 w-5 text-gray-400" />
                   <Input
                     id="confirmarSenha"
                     type="password"
                     placeholder="Digite a senha novamente"
-                    className="pl-10 border-gray-300 focus:border-[#DC2626] focus:ring-[#DC2626]"
+                    className="pl-10"
                     value={formData.confirmarSenha}
                     onChange={(e) => setFormData({ ...formData, confirmarSenha: e.target.value })}
                     disabled={loading}
@@ -226,7 +224,7 @@ export default function CadastroProfessorPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#DC2626] hover:bg-[#B91C1C] text-white font-semibold py-6 rounded-lg transition-all duration-200"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
                 disabled={loading}
               >
                 {loading ? 'Criando conta...' : 'Criar conta'}
@@ -238,7 +236,7 @@ export default function CadastroProfessorPage() {
                 <button
                   type="button"
                   onClick={() => router.push('/login')}
-                  className="text-[#DC2626] hover:underline font-medium"
+                  className="text-blue-600 hover:underline font-medium"
                 >
                   Fazer login
                 </button>

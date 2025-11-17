@@ -1,31 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Check,
-  Dumbbell,
-  Sparkles,
-  Users,
-  TrendingUp,
-  ArrowRight,
-} from 'lucide-react';
+import { Check, Dumbbell, Sparkles, Users, TrendingUp, ArrowRight } from 'lucide-react';
 
 const planosAluno = [
   {
     slug: 'aluno_orbian',
     nome: 'Plano Aluno Orbian',
     descricao: 'Treinos e nutrição com IA',
-    preco: 19.9,
+    preco: 19.90,
     destaque: true,
     beneficios: [
       'Treinos personalizados por objetivo',
@@ -43,18 +30,16 @@ const planosAluno = [
 export default function PlanosAlunoPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
   const [loading, setLoading] = useState(false);
   const [selectedPlano, setSelectedPlano] = useState<string | null>(null);
-
-  // 👇 aqui está o ajuste: usa optional chaining para evitar o erro de "possivelmente null"
-  const isNovo = searchParams?.get('novo') === 'true';
+  const isNovo = searchParams.get('novo') === 'true';
 
   const handleAssinar = async (planoSlug: string) => {
     setLoading(true);
     setSelectedPlano(planoSlug);
 
     try {
+      // Criar assinatura no Mercado Pago
       const response = await fetch('/api/pagamentos/criar-assinatura-aluno', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -67,6 +52,7 @@ export default function PlanosAlunoPage() {
         throw new Error(data.error || 'Erro ao criar assinatura');
       }
 
+      // Redirecionar para checkout do Mercado Pago
       if (data.checkoutUrl) {
         window.location.href = data.checkoutUrl;
       }
@@ -131,19 +117,13 @@ export default function PlanosAlunoPage() {
                 <Sparkles className="w-8 h-8 text-white" />
               </div>
               <CardTitle className="text-3xl font-bold">{plano.nome}</CardTitle>
-              <CardDescription className="text-lg">
-                {plano.descricao}
-              </CardDescription>
+              <CardDescription className="text-lg">{plano.descricao}</CardDescription>
               <div className="mt-6">
                 <div className="text-5xl font-bold text-gray-900">
                   R$ {plano.preco.toFixed(2)}
-                  <span className="text-xl text-gray-600 font-normal">
-                    /mês
-                  </span>
+                  <span className="text-xl text-gray-600 font-normal">/mês</span>
                 </div>
-                <p className="text-sm text-gray-500 mt-2">
-                  Cancele quando quiser
-                </p>
+                <p className="text-sm text-gray-500 mt-2">Cancele quando quiser</p>
               </div>
             </CardHeader>
 
@@ -162,9 +142,7 @@ export default function PlanosAlunoPage() {
                 disabled={loading && selectedPlano === plano.slug}
                 className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-lg py-6"
               >
-                {loading && selectedPlano === plano.slug
-                  ? 'Processando...'
-                  : 'Assinar agora'}
+                {loading && selectedPlano === plano.slug ? 'Processando...' : 'Assinar agora'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
 
@@ -179,9 +157,7 @@ export default function PlanosAlunoPage() {
       {/* Features adicionais */}
       <div className="bg-white py-16">
         <div className="max-w-7xl mx-auto px-4">
-          <h3 className="text-3xl font-bold text-center mb-12">
-            Por que escolher o Orbian Fit?
-          </h3>
+          <h3 className="text-3xl font-bold text-center mb-12">Por que escolher o Orbian Fit?</h3>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="mx-auto mb-4 bg-blue-100 p-4 rounded-2xl w-fit">
@@ -189,8 +165,7 @@ export default function PlanosAlunoPage() {
               </div>
               <h4 className="font-semibold text-lg mb-2">Resultados Reais</h4>
               <p className="text-gray-600">
-                Acompanhe sua evolução com métricas detalhadas e ajustes
-                automáticos
+                Acompanhe sua evolução com métricas detalhadas e ajustes automáticos
               </p>
             </div>
 
@@ -198,12 +173,9 @@ export default function PlanosAlunoPage() {
               <div className="mx-auto mb-4 bg-purple-100 p-4 rounded-2xl w-fit">
                 <Sparkles className="w-8 h-8 text-purple-600" />
               </div>
-              <h4 className="font-semibold text-lg mb-2">
-                Inteligência Artificial
-              </h4>
+              <h4 className="font-semibold text-lg mb-2">Inteligência Artificial</h4>
               <p className="text-gray-600">
-                IA que aprende com você e adapta treinos e nutrição
-                automaticamente
+                IA que aprende com você e adapta treinos e nutrição automaticamente
               </p>
             </div>
 

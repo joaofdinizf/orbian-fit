@@ -30,7 +30,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 flex items-center justify-center">
                 <img 
-                  src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/b4d57c0d-ebec-4a74-a3a6-002c5c2e5f55.png" 
+                  src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/6aeb479b-c4ce-4e78-9000-aab5f70cf4c6.png" 
                   alt="Orbian Fit Logo" 
                   className="h-10 w-auto"
                 />
@@ -346,7 +346,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto text-center">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img 
-              src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/b4d57c0d-ebec-4a74-a3a6-002c5c2e5f55.png" 
+              src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/6aeb479b-c4ce-4e78-9000-aab5f70cf4c6.png" 
               alt="Orbian Fit Logo" 
               className="h-8 w-auto"
             />

@@ -18,7 +18,7 @@ export default function LoginSelectionPage() {
           <div className="text-center mb-8">
             <div className="flex justify-center mb-4">
               <img 
-                src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/b4d57c0d-ebec-4a74-a3a6-002c5c2e5f55.png" 
+                src="https://k6hrqrxuu8obbfwn.public.blob.vercel-storage.com/temp/6aeb479b-c4ce-4e78-9000-aab5f70cf4c6.png" 
                 alt="Orbian Fit Logo" 
                 className="h-16 w-auto"
               />
@@ -27,7 +27,7 @@ export default function LoginSelectionPage() {
               Orbian Fit
             </h1>
             <p className="text-muted-foreground text-sm">
-              Conectando personal trainers e alunos de forma inteligente
+              Conectando personal trainers e alunos
             </p>
           </div>
 

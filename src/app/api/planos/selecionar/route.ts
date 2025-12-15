@@ -1,19 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/database';
-import { getSession } from '@/lib/auth/session';
+import { verifyToken } from '@/lib/auth';
+import { updateUserPlan } from '@/lib/database';
 
 export async function POST(request: NextRequest) {
   try {
-    const session = await getSession();
-
-    if (!session) {
+    // Verificar autenticação
+    const token = request.cookies.get('auth_token')?.value;
+    
+    if (!token) {
       return NextResponse.json(
-        { error: 'Não autenticado' },
+        { error: 'Não autenticado. Faça login primeiro.' },
         { status: 401 }
       );
     }
 
-    const { planoSlug } = await request.json();
+    let userId: string;
+    try {
+      const decoded = await verifyToken(token);
+      userId = decoded.userId;
+    } catch (error) {
+      return NextResponse.json(
+        { error: 'Token inválido. Faça login novamente.' },
+        { status: 401 }
+      );
+    }
+
+    const body = await request.json();
+    const { planoSlug } = body;
 
     if (!planoSlug) {
       return NextResponse.json(
@@ -22,7 +35,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validar se o plano existe e é de professor
+    // Validar plano
     const planosValidos = ['personal_20', 'personal_50', 'personal_50_plus'];
     if (!planosValidos.includes(planoSlug)) {
       return NextResponse.json(
@@ -31,39 +44,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Atualizar o plano do usuário
-    const { error: updateError } = await db
-      .from('users')
-      .update({ plano_atual_slug: planoSlug })
-      .eq('id', session.user.id);
+    // Atualizar plano do usuário
+    const updatedUser = await updateUserPlan(userId, planoSlug);
 
-    if (updateError) {
-      console.error('Erro ao atualizar plano:', updateError);
+    if (!updatedUser) {
       return NextResponse.json(
         { error: 'Erro ao atualizar plano' },
         { status: 500 }
       );
     }
 
-    // Criar assinatura (por enquanto sem integração com Mercado Pago)
-    const { error: assinaturaError } = await db
-      .from('assinaturas')
-      .insert({
-        user_id: session.user.id,
-        plano_slug: planoSlug,
-        status: 'ativa', // Em produção, seria 'pendente' até confirmar pagamento
-        data_inicio: new Date().toISOString(),
-      });
-
-    if (assinaturaError) {
-      console.error('Erro ao criar assinatura:', assinaturaError);
-    }
-
     return NextResponse.json({
       success: true,
       message: 'Plano selecionado com sucesso!',
+      plano: planoSlug,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Erro ao selecionar plano:', error);
     return NextResponse.json(
       { error: 'Erro interno do servidor' },
